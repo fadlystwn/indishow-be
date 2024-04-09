@@ -22,6 +22,25 @@ class ArtistsController < ApplicationController
     end
   end
 
+  # PATCH /artists/:id
+
+  def update
+    @artist = Artist.find(params[:id])
+    @artist_updated = @artist.update(artist_params)
+    if @artist_updated
+      render json: @artist
+    else
+      render json: @artist.errors, status: :unprocessable_entity
+    end
+  end
+
+  # DELETE /artists/:id
+  def destroy
+    @artist = Artist.find(params[:id])
+    @artist.destroy
+
+  end
+
   private
 
   def artist_params
