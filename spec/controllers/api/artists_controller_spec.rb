@@ -5,26 +5,29 @@ RSpec.describe "Artists", type: :request do
 
   context "GET /Index" do
     it "should render index page as JSON" do
-      # Perform a GET request to the endpoint that returns JSON
       get artists_path, params: { format: :json }
-
-      # Validate the response
       expect(response).to have_http_status(:success)
+
       expect(response.content_type).to eq("application/json; charset=utf-8")
 
-      # You can also add more specific JSON response validations here
-      # For example, assuming your API returns a list of artists:
       parsed_response = JSON.parse(response.body)
+
       expect(parsed_response).to be_an_instance_of(Array)
-      # Add more expectations as needed based on your JSON structure
 
-      # Additional example if you're using a serializer or specific JSON structure:
-      # expect(parsed_response[0]['name']).to eq(artist.name)
+    end
+  end
 
-      # More validations can be added based on your specific API response structure
+  context "GET /Show" do
+    it "should render show page as JSON" do
+      get artist_path(artist.id), params: { format: :json }
+      expect(response).to have_http_status(:success)
+      expect(response.content_type).to eq("application/json; charset=utf-8")
+      parsed_response = JSON.parse(response.body)
+      expect(parsed_response).to be_an_instance_of(Hash)
 
-      # Or, using a custom matcher (e.g., rendering_json):
-      # expect(response).to render_json
+      expect(parsed_response["id"]).to eq(artist.id)
+      expect(parsed_response["name"]).to eq(artist.name)
+      expect(parsed_response["bio"]).to eq(artist.bio)
     end
   end
 end
