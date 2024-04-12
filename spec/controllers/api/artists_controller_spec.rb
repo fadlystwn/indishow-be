@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe ArtistsController, type: :controller do
+  let(:artist) { FactoryBot.create(:artist) }
   describe "GET #index" do
     it "renders index page as JSON" do
       get :index, format: :json
@@ -12,7 +13,7 @@ RSpec.describe ArtistsController, type: :controller do
   end
 
   describe "GET #show" do
-    let(:artist) { FactoryBot.create(:artist) }
+
 
     it "renders show page as JSON" do
       get :show, params: { id: artist.id }, format: :json
@@ -43,7 +44,7 @@ RSpec.describe ArtistsController, type: :controller do
     it "returns unprocessable entity if artist is not saved" do
       expect {
         post :create, params: { artist: { name: nil, bio: nil } }, format: :json
-      }.to_not change(Artist, :count)
+      }.to change(Artist, :count).by(0)
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.content_type).to eq("application/json; charset=utf-8")
       parsed_response = JSON.parse(response.body)
@@ -51,4 +52,37 @@ RSpec.describe ArtistsController, type: :controller do
       expect(parsed_response).to have_key("bio")
     end
   end
+
+  describe "PATCH #update" do
+    let(:valid_attributes) { FactoryBot.attributes_for(:artist) }
+
+    it "updates an artist" do
+      patch :update, params: { id: artist.id, artist: valid_attributes }, format: :json
+      expect(response).to have_http_status(:success)
+      expect(response.content_type).to eq("application/json; charset=utf-8")
+      parsed_response = JSON.parse(response.body)
+      expect(parsed_response["name"]).to eq(valid_attributes[:name])
+      expect(parsed_response["bio"]).to eq(valid_attributes[:bio])
+    end
+
+    it "returns unprocessable entity if artist is not updated" do
+      patch :update, params: { id: artist.id, artist: { name: nil, bio: nil } }, format: :json
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.content_type).to eq("application/json; charset=utf-8")
+      parsed_response = JSON.parse(response.body)
+      expect(parsed_response).to have_key("name")
+      expect(parsed_response).to have_key("bio")
+    end
+  end
+
+  describe "DELETE #destroy" do
+    it "deletes an artist" do
+      delete :destroy, params: { id: artist.id }, format: :json
+      expect(response).to have_http_status(:success)
+      expect(response.content_type).to eq("application/json; charset=utf-8")
+      parsed_response = JSON.parse(response.body)
+      expect(parsed_response["message"]).to eq("Artist deleted")
+    end
+  end
+
 end
