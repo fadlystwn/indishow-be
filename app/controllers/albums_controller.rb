@@ -1,9 +1,10 @@
 class AlbumsController < ApplicationController
   before_action :find_artist
+  before_action :find_album, only: [:show, :update, :destroy]
 
   def index
-    @album = @artist.albums
-    render json: @album
+    @albums = @artist.albums
+    render json: @albums
   end
 
   def show
@@ -17,29 +18,34 @@ class AlbumsController < ApplicationController
 
   def create
     @album = @artist.albums.build(album_params)
+
     if @album.save
-      render json: @album
+      render json: @album, status: :created
     else
       render json: { errors: @album.errors }, status: :unprocessable_entity
     end
   end
 
   def update
-    @album = @artist.albums.find(params[:id])
-    @album_updated = @album.update(album_params)
-    if @album_updated
+    if @album.update(album_params)
       render json: @album
     else
-      render json: @album.errors, status: :unprocessable_entity
+      render json: { errors: @album.errors }, status: :unprocessable_entity
     end
   end
+
   def destroy
-    @album = @artist.albums.find(params[:id])
     @album.destroy
+    head :no_content
   end
+
   private
     def find_artist
       @artist = Artist.find(params[:artist_id])
+    end
+
+    def find_album
+     @album = Album.find(params[:id])
     end
 
     def album_params

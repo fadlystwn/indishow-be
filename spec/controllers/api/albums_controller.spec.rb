@@ -28,45 +28,58 @@ RSpec.describe AlbumsController, type: :controller do
   end
 
   describe "POST #create" do
-    let(:valid_attributes) { FactoryBot.attributes_for(:album) }
+    let(:valid_params) { { album: { title: "New Album", release_date: "2022-01-01" } } }
+    let(:invalid_params) { { album: { title: nil, release_date: nil } } }
 
-    it "creates a new album" do
-      expect {
-        post :create, params: { artist_id: artist.id, album: valid_attributes }, format: :json
-      }.to change(Album, :count).by(1)
-      expect(response).to have_http_status(:success)
-      expect(response.content_type).to eq("application/json; charset=utf-8")
-      parsed_response = JSON.parse(response.body)
-      expect(parsed_response["title"]).to eq(valid_attributes[:title])
-      expect(parsed_response["release_date"]).to eq(valid_attributes[:release_date])
+    context "with valid params" do
+      it "creates a new album" do
+        expect {
+          post :create, params: { artist_id: artist.id, album: valid_params }, format: :json
+        }.to change(Album, :count).by(1)
+        expect(response).to have_http_status(:created)
+        expect(response.content_type).to eq("application/json; charset=utf-8")
+        parsed_response = JSON.parse(response.body)
+        expect(parsed_response["title"]).to eq(valid_params[:album][:title])
+        expect(parsed_response["release_date"]).to eq(valid_params[:album][:release_date])
+      end
     end
 
-    it "returns unprocessable entity if album is not saved" do
-      expect {
-        post :create, params: { artist_id: artist.id, album: { title: nil, release_date: nil } }, format: :json
-      }.to_not change(Album, :count)
-      expect(response).to have_http_status(:unprocessable_entity)
-      expect(response.content_type).to eq("application/json; charset=utf-8")
-      parsed_response = JSON.parse(response.body)
-      expect(parsed_response).to have_key("errors")
+    context "with invalid params" do
+      it "returns unprocessable entity" do
+        expect {
+          post :create, params: { artist_id: artist.id, album: invalid_params }, format: :json
+        }.not_to change(Album, :count)
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.content_type).to eq("application/json; charset=utf-8")
+        parsed_response = JSON.parse(response.body)
+        expect(parsed_response).to have_key("errors")
+      end
     end
   end
 
   describe "PATCH #update" do
-    it "updates the album" do
-      patch :update, params: { artist_id: artist.id, id: album.id, album: { title: "New Title" } }, format: :json
-      expect(response).to have_http_status(:success)
-      expect(response.content_type).to eq("application/json; charset=utf-8")
-      parsed_response = JSON.parse(response.body)
-      expect(parsed_response["title"]).to eq("New Title")
+    let(:valid_params) { { album: { title: "Updated Album", release_date: "2023-01-01" } } }
+    let(:invalid_params) { { album: { title: nil, release_date: nil } } }
+
+    context "with valid params" do
+      it "updates the album" do
+        patch :update, params: { artist_id: artist.id, id: album.id, album: valid_params }, format: :json
+        expect(response).to have_http_status(:success)
+        expect(response.content_type).to eq("application/json; charset=utf-8")
+        parsed_response = JSON.parse(response.body)
+        expect(parsed_response["title"]).to eq(valid_params[:album][:title])
+        expect(parsed_response["release_date"]).to eq(valid_params[:album][:release_date])
+      end
     end
 
-    it "returns unprocessable entity if album is not updated" do
-      patch :update, params: { artist_id: artist.id, id: album.id, album: { title: nil } }, format: :json
-      expect(response).to have_http_status(:unprocessable_entity)
-      expect(response.content_type).to eq("application/json; charset=utf-8")
-      parsed_response = JSON.parse(response.body)
-      expect(parsed_response).to have_key("errors")
+    context "with invalid params" do
+      it "returns unprocessable entity" do
+        patch :update, params: { artist_id: artist.id, id: album.id, album: invalid_params }, format: :json
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.content_type).to eq("application/json; charset=utf-8")
+        parsed_response = JSON.parse(response.body)
+        expect(parsed_response).to have_key("errors")
+      end
     end
   end
 
@@ -75,7 +88,7 @@ RSpec.describe AlbumsController, type: :controller do
       expect {
         delete :destroy, params: { artist_id: artist.id, id: album.id }, format: :json
       }.to change(Album, :count).by(-1)
-      expect(response).to have_http_status(:success)
+      expect(response).to have_http_status(:no_content)
     end
   end
 end
