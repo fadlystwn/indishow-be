@@ -35,8 +35,11 @@ class AlbumsController < ApplicationController
   end
 
   def destroy
-    @album.destroy
-    head :no_content
+    if @album.destroy
+      render json: { message: 'Album successfully deleted' }, status: :ok
+    else
+      render json: { errors: @album.errors }, status: :not_found
+    end
   end
 
   private
