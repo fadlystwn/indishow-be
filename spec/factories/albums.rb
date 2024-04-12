@@ -1,3 +1,5 @@
+require 'factory_bot'
+
 FactoryBot.define do
   factory :album do
     title { "Foo Fighters" }
