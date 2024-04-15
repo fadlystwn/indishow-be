@@ -7,8 +7,12 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-  resources :artists do
-    resources :albums
+  namespace :api do
+    namespace :v1 do
+      resources :artists do
+        resources :albums
+      end
+      resources :users
+    end
   end
-  resources :users
 end
