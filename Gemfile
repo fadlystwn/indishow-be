@@ -46,8 +46,21 @@ group :development do
 end
 
 group :development, :test do
+  # Factory Bot Rails provides a set of factories for testing [https://github.com/thoughtbot/factory_bot_rails]
   gem 'factory_bot_rails'
+
+  # RSpec Rails is a testing framework for Rails applications [https://github.com/rspec/rspec-rails]
   gem 'rspec-rails'
+
+  # Rails Controller Testing provides a set of helpers for testing Rails controllers [https://github.com/rails/rails-controller-testing]
   gem 'rails-controller-testing'
+
+  # pg is a Ruby interface to the PostgreSQL RDBMS [https://github.com/ged/ruby-pg]
   gem 'pg'
 end
+
+# Devise is a flexible authentication solution for Rails [https://github.com/heartcombo/devise]
+gem "devise"
+
+# Devise JWT is a JSON Web Token authentication strategy for Devise [https://github.com/waiting-for-dev/devise-jwt]
+gem "devise-jwt"
