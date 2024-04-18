@@ -12,7 +12,6 @@ Rails.application.routes.draw do
       resources :artists do
         resources :albums
       end
-      resources :users
-    end
+        end
   end
 end
