@@ -15,7 +15,19 @@ Rails.application.routes.draw do
       end
     end
   end
-  resources :users
+
+  # Profile
+  resource :profile, only: [:show, :update]
+
+  # Login
   post '/login', to: 'sessions#create'
   delete '/logout', to: 'sessions#destroy'
+
+  # Register
+  post '/register', to: 'users#create'
+
+
+  # Forgot Password
+  post '/forgot_password', to: 'passwords#forgot'
+  post '/reset_password', to: 'passwords#reset'
 end

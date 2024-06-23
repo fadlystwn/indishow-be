@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_18_104448) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_07_032042) do
   create_table "albums", force: :cascade do |t|
     t.string "title"
     t.date "release_date"
@@ -28,6 +28,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_18_104448) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "profiles", force: :cascade do |t|
+    t.string "band_name"
+    t.text "bio"
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_profiles_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -37,4 +46,5 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_18_104448) do
   end
 
   add_foreign_key "albums", "artists"
+  add_foreign_key "profiles", "users"
 end
